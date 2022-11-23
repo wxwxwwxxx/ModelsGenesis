@@ -18,19 +18,13 @@ done
 import warnings
 warnings.filterwarnings('ignore')
 import os
-import keras
-print("Keras = {}".format(keras.__version__))
-import tensorflow as tf
-os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'  # or any {'0', '1', '2'}
-
+#os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'  # or any {'0', '1', '2'}
 import sys
 import math
 import random
-
 import matplotlib.pyplot as plt
 import numpy as np
 import SimpleITK as sitk
-
 from tqdm import tqdm
 from sklearn import metrics
 from optparse import OptionParser
@@ -193,8 +187,7 @@ def get_self_learning_data(fold, config):
     slice_set = []
     for index_subset in fold:
         luna_subset_path = os.path.join(config.DATA_DIR, "subset"+str(index_subset))
-        file_list = glob(os.path.join(luna_subset_path, "*.mhd"))
-        
+        file_list = glob(os.path.join(luna_subset_path, "*.nii"))
         for img_file in tqdm(file_list):
             
             itk_img = sitk.ReadImage(img_file) 
@@ -210,6 +203,7 @@ def get_self_learning_data(fold, config):
 
 print(">> Fold {}".format(fold))
 cube = get_self_learning_data([fold], config)
+print(cube)
 print("cube: {} | {:.2f} ~ {:.2f}".format(cube.shape, np.min(cube), np.max(cube)))
 np.save(os.path.join(options.save, 
                      "bat_"+str(config.scale)+

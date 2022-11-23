@@ -7,7 +7,7 @@ class models_genesis_config:
     exp_name = model + "-" + suffix
     
     # data
-    data = "/mnt/dataset/shared/zongwei/LUNA16/Self_Learning_Cubes"
+    data = "/dataset/generated_cubes"
     train_fold=[0,1,2,3,4]
     valid_fold=[5,6]
     test_fold=[7,8,9]
@@ -22,7 +22,7 @@ class models_genesis_config:
     # model pre-training
     verbose = 1
     weights = None
-    batch_size = 6
+    batch_size = 32
     optimizer = "sgd"
     workers = 10
     max_queue_size = workers * 4
@@ -40,7 +40,7 @@ class models_genesis_config:
     flip_rate = 0.4
     
     # logs
-    model_path = "pretrained_weights"
+    model_path = "/ckpt/pretrained_weights"
     if not os.path.exists(model_path):
         os.makedirs(model_path)
     logs_path = os.path.join(model_path, "Logs")

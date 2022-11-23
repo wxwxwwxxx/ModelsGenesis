@@ -157,7 +157,7 @@ def image_out_painting(x):
                 
 
 
-def generate_pair(img, batch_size, config, status="test"):
+def  generate_pair(img, batch_size, config, status="test"):
     img_rows, img_cols, img_deps = img.shape[2], img.shape[3], img.shape[4]
     while True:
         index = [i for i in range(img.shape[0])]

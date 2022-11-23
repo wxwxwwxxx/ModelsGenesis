@@ -2,7 +2,7 @@ import os
 import shutil
 
 class models_genesis_config:
-    DATA_DIR = "/mnt/dataset/shared/zongwei/LUNA16/Self_Learning_Cubes"
+    DATA_DIR = "/dataset/generated_cubes"
     nb_epoch = 1000
     patience = 20
     lr = 1e-1
@@ -27,7 +27,7 @@ class models_genesis_config:
                  flip_rate=0.4,
                  local_rate=0.5,
                  verbose=1,
-                 scale=64,
+                 scale=32,
                 ):
         self.exp_name = "genesis_nnunet_luna16_006"
         self.data_augmentation = data_augmentation

@@ -39,13 +39,13 @@ device=torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 x_train = []
 for i,fold in enumerate(tqdm(config.train_fold)):
-    s = np.load(os.path.join(config.DATA_DIR, "bat_"+str(config.scale)+"_s_64x64x32_"+str(fold)+".npy"))
+    s = np.load(os.path.join(config.DATA_DIR, "bat_"+str(config.scale)+"_64x64x32_"+str(fold)+".npy"))
     x_train.extend(s)
 x_train = np.expand_dims(np.array(x_train), axis=1)
 
 x_valid = []
 for i,fold in enumerate(tqdm(config.valid_fold)):
-    s = np.load(os.path.join(config.DATA_DIR, "bat_"+str(config.scale)+"_s_64x64x32_"+str(fold)+".npy"))
+    s = np.load(os.path.join(config.DATA_DIR, "bat_"+str(config.scale)+"_64x64x32_"+str(fold)+".npy"))
     x_valid.extend(s)
 x_valid = np.expand_dims(np.array(x_valid), axis=1)
 print('training_data_shape: ', x_train.shape)
@@ -81,8 +81,8 @@ summary(model, (1,64,64,32), batch_size=-1)
 criterion = nn.MSELoss()
 optimizer = torch.optim.SGD(model.parameters(), config.lr, momentum=0.9, weight_decay=0.0, nesterov=False)
 scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=int(config.patience * 0.6), gamma=0.5) 
-training_generator = generate_pair(x_train,config.batch_size,config)
-validation_generator = generate_pair(x_valid, config.batch_size,config)
+training_generator = generate_pair(x_train, config.batch_size, config)
+validation_generator = generate_pair(x_valid, config.batch_size, config)
 # to track the training loss as the model trains
 train_losses = []
 # to track the validation loss as the model trains
