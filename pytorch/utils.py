@@ -201,3 +201,27 @@ def  generate_pair(img, batch_size, config, status="test"):
             imageio.imwrite(os.path.join(config.sample_path, config.exp_name, file_name), final_sample)
 
         yield (x, y)
+
+def generate_pair_for_pytorch(img,config):
+    x = img.copy()
+    y = img.copy()
+
+    # Flip
+    x, y = data_augmentation(x, y, config.flip_rate)
+
+    # Local Shuffle Pixel
+    x = local_pixel_shuffling(x, prob=config.local_rate)
+
+    # Apply non-Linear transformation with an assigned probability
+    x = nonlinear_transformation(x, config.nonlinear_rate)
+
+    # Inpainting & Outpainting
+    if random.random() < config.paint_rate:
+        if random.random() < config.inpaint_rate:
+            # Inpainting
+            x = image_in_painting(x)
+        else:
+            # Outpainting
+            x = image_out_painting(x)
+
+    return x, y
