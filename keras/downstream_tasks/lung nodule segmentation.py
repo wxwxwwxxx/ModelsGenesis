@@ -116,7 +116,7 @@ while conf.batch_size > 1:
 
 model = unet_model_3d((1,conf.input_rows,conf.input_cols,conf.input_deps), batch_normalization=True)
 print("[INFO] Load trained model from {}".format( os.path.join(conf.model_path, conf.exp_name+".h5") ))
-model.load_weights( os.path.join(conf.model_path, conf.exp_name+".h5") )
+model.load_weights(os.path.join(conf.model_path, conf.exp_name+".h5") )
 
 p_test = segmentation_model_evaluation(model=model, config=conf, x=x_test, y=y_test, note=conf.exp_name)
 

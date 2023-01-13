@@ -133,3 +133,58 @@ class UNet3D(nn.Module):
         self.out = self.out_tr(self.out_up_64)
 
         return self.out
+
+class UNet3D_bcls(nn.Module):
+    # the number of convolutions in each layer corresponds
+    # to what is in the actual prototxt, not the intent
+    def __init__(self, n_class=2, act='relu'):
+        super(UNet3D_bcls, self).__init__()
+
+        self.down_tr64 = DownTransition(1, 0, act)
+        self.down_tr128 = DownTransition(64, 1, act)
+        self.down_tr256 = DownTransition(128, 2, act)
+        self.down_tr512 = DownTransition(256, 3, act)
+        self.flatten = nn.Flatten()
+        self.output_fc1 = nn.Linear(131072, 2048)
+        self.output_fc2 = nn.Linear(2048, n_class)
+
+    def forward(self, x):
+        self.out64, _ = self.down_tr64(x)
+        self.out128, _ = self.down_tr128(self.out64)
+        self.out256, _ = self.down_tr256(self.out128)
+        self.out512, _ = self.down_tr512(self.out256)
+
+        self.clsout = self.flatten(self.out512)
+        self.clsout = self.output_fc1(self.clsout)
+        self.clsout = self.output_fc2(self.clsout)
+        return self.clsout
+
+# This is a modified version of UNet3D, can be fuse to original UNet3d in the future
+class UNet3D_bms(nn.Module):
+    # the number of convolutions in each layer corresponds
+    # to what is in the actual prototxt, not the intent
+    def __init__(self, n_class=1, act='relu'):
+        super(UNet3D_bms, self).__init__()
+
+        self.down_tr64 = DownTransition(4,0,act)
+        self.down_tr128 = DownTransition(64,1,act)
+        self.down_tr256 = DownTransition(128,2,act)
+        self.down_tr512 = DownTransition(256,3,act)
+
+        self.up_tr256 = UpTransition(512, 512,2,act)
+        self.up_tr128 = UpTransition(256,256, 1,act)
+        self.up_tr64 = UpTransition(128,128,0,act)
+        self.out_tr = OutputTransition(64, n_class)
+
+    def forward(self, x):
+        self.out64, self.skip_out64 = self.down_tr64(x)
+        self.out128,self.skip_out128 = self.down_tr128(self.out64)
+        self.out256,self.skip_out256 = self.down_tr256(self.out128)
+        self.out512,self.skip_out512 = self.down_tr512(self.out256)
+
+        self.out_up_256 = self.up_tr256(self.out512,self.skip_out256)
+        self.out_up_128 = self.up_tr128(self.out_up_256, self.skip_out128)
+        self.out_up_64 = self.up_tr64(self.out_up_128, self.skip_out64)
+        self.out = self.out_tr(self.out_up_64)
+
+        return self.out
